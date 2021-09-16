@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
+import Loader from "../components/loader/loader";
 import ErrorContext from "../context/error";
 import submitResult from "../dbUtil/submitResult";
 
@@ -7,14 +8,18 @@ export default function Result() {
   const { errors, user } = useContext(ErrorContext);
   const [scores, setScores] = useState([]);
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetcher() {
       const Data = await submitResult({ name: user, mistakes: errors });
       setScores(Data);
+      setLoading(false);
     }
     fetcher();
   }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <div className="result__container">
@@ -32,7 +37,7 @@ export default function Result() {
               <span>Time</span>
             </li>
             {scores.map((score) => (
-              <li>
+              <li key={score.time * Math.random()}>
                 <span>{score.mistakes}</span>
                 <span>{String(new Date(score.time).toLocaleString())}</span>
               </li>
