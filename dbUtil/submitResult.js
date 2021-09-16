@@ -1,5 +1,5 @@
-export default function submitResult({ name, mistakes }) {
-  fetch("/api/user", {
+export default async function submitResult({ name, mistakes }) {
+  const res = await fetch("/api/user", {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -10,4 +10,9 @@ export default function submitResult({ name, mistakes }) {
       time: new Date().getTime(),
     }),
   });
+  if (res.status === 200) {
+    let data = await fetch(`/api/user/${name}`);
+    data = await data.json();
+    return data.data;
+  }
 }
